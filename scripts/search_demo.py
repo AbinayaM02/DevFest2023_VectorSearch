@@ -137,6 +137,7 @@ def search_offline():
             st.write(titles[i] + ":")
             st.write(texts[i] + "\n")
 
+
 def search_cohere():
     st.markdown(f'# {list(page_names_to_funcs.keys())[1]}')
     st.write(
@@ -188,9 +189,8 @@ def search_cohere():
                 st.write(titles[i] + ":")
                 st.write(texts[i] + "\n")
 
-
 def search_own_data():
-    st.markdown(f'# {list(page_names_to_funcs.keys())[1]}')
+    st.markdown(f'# {list(page_names_to_funcs.keys())[3]}')
     st.write(
         """
         This demo illustrates how you can search your own document using
