@@ -86,11 +86,10 @@ def search_offline():
         open source model. When you run this demo for the first time, both data loading
         (35 million datapoints) and generation of embeddings takes a lot of time 
         proportional to the number of pages being loaded. After the first run, the 
-        embeddings file will be saved and loaded in the subsequent run. If you change 
-        the number of pages everytime you run the demo, please delete the old embeddings 
-        file and the run the demo. Also the result will be dependent on the chosen model 
-        and the number of documents loaded. Feel free to play around with differnet models
-        from [here](https://huggingface.co/spaces/mteb/leaderboard) and data subsets 
+        embeddings file will be saved and loaded in the subsequent run. Also the result will be
+        dependent on the chosen model and the number of documents loaded. Feel free to 
+        play around with differnet models from 
+        [here](https://huggingface.co/spaces/mteb/leaderboard) and data subsets 
         (check the config file for changing the settings). Enjoy!
         """
     )
