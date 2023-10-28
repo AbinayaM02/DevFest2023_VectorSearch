@@ -33,7 +33,8 @@ def load_data_complete(max_docs: int, wiki_emb: str) -> dict:
 
 def get_embeddings(emb_model:str, 
                    docs: dict, 
-                   query_str: bool == False) -> np.array:
+                   query_str: bool == False,
+                   max_docs: int) -> np.array:
     """ Get the embeddings.
 
     Args:
@@ -41,6 +42,7 @@ def get_embeddings(emb_model:str,
         docs (dict): dict of documents.
         query_str (bool, optional): whether it's a query or text. 
                                     Defaults to =False.
+        max_docs (int): maximum data loaded.
 
     Returns:
         np.array: embeddings of the data.
@@ -59,14 +61,18 @@ def get_embeddings(emb_model:str,
         texts = []
         for doc in docs:
             texts.append(doc['text'])
-        # Create embeddings if it doesn't exist
-        if not os.path.exists(EMB_PATH):
+
+        # If max_docs = 100000, load the exisitng embeddings, else
+        # create new embeddings on the fly with a new file name.
+        # Create embeddings if it doesn't exist for a particular data subset
+        file_name = "../data/" + str(max_docs) + ".npy"
+        if max_docs != MAX_DOCS and not os.path.exists(file_name):
             embeddings= model.encode(texts, normalize_embeddings=True,
                                     convert_to_tensor=True)
-            np.save(EMB_PATH, embeddings)
+            np.save(file_name, embeddings)
         else:
-            # Load the embeddings if it exists
-            embeddings = np.load(EMB_PATH)
+            # Load the embeddings if it exists for a particular data subset
+            embeddings = np.load(EMB_PATH if max_docs==MAX_DOCS else file_name)
     return embeddings
 
 
