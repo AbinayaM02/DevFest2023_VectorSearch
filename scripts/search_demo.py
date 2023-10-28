@@ -67,7 +67,7 @@ def intro():
         - [Sentence Transformers](https://www.sbert.net/)
 
         #### Github Link:
-        - [Vector Search Demo]()
+        - [Vector Search Demo](https://github.com/AbinayaM02/DevFest2023_VectorSearch)
 
         #### Want to learn more about streamlit?
 
@@ -96,7 +96,9 @@ def search_offline():
     )
 
     st.info("For the purpose of the demo, choose 100000 on the slider "+ 
-            "since the embeddings are already generated!")
+            "since the embeddings are already generated (if you run it locally - highly recommended)! " +
+            "If using cloud demo, choose a smaller number of datapoints to see " +
+            "the demo in action.")
     pages = st.slider("Select no. of pages to load:", 
                               min_value=100, 
                               max_value=MAX_DOCS, 
@@ -104,9 +106,9 @@ def search_offline():
                               value=1000)
 
     # Get the query from the user
-    query = st.text_input("What do you want to search?")
+    query_txt = st.text_input("What do you want to search?")
 
-    if query != '':
+    if query_txt != '':
         with st.status("Loading data..."):
             # Load data
             docs = load_data_complete(max_docs=pages, 
@@ -117,19 +119,21 @@ def search_offline():
             # Get docs embeddings
             doc_embeddings = get_embeddings(emb_model=EMB_MODEL,
                                             docs=docs, 
-                                            query_str=False)
+                                            query_str=False,
+                                            max_docs=pages)
         st.info("Document embeddings is loaded")
 
         with st.status("Getting query embedding..."):
             # Get query embeddings
-            query_embedding = get_embeddings(docs=[query], 
+            query_embedding = get_embeddings(docs=[query_txt], 
                                             emb_model=EMB_MODEL,
-                                            query_str=True)
+                                            query_str=True,
+                                            max_docs=pages)
         st.info("Query embedding is obtained")
 
         with st.status("Searching..."):
             # Get top k documents matching the query
-            titles, texts = get_top_k(query, docs, query_embedding, 
+            titles, texts = get_top_k(query_txt, docs, query_embedding, 
                                       doc_embeddings, TOP_K)
 
         st.write("Search Results: \n")
@@ -199,7 +203,10 @@ def search_own_data():
         """
     )
 
-    # File upload
+    st.info("If a new file is uploaded, embeddings and index are created afresh. "+
+            "But, if the same file is queried multiple times, already existing embeddings " +
+            "and index are reused.")
+    # File upload 
     uploaded_file = st.file_uploader('Upload an article:', type='pdf')
 
     # Query text
@@ -219,7 +226,9 @@ def search_own_data():
                     tmp_file.write(uploaded_file.getbuffer())
                     documents = get_document(tmp_file.name)
                 # Create faiss index with embeddings
-                faiss = index_embeddings(documents, embeddings=get_embeddings_model(EMB_MODEL))
+                faiss = index_embeddings(documents, 
+                                         embeddings=get_embeddings_model(EMB_MODEL),
+                                         tmp_file=tmp_file.name.split('/')[-1])
                 # Get response
                 response = get_response(faiss, query_text)
 
