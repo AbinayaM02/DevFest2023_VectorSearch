@@ -37,23 +37,26 @@ def get_embeddings_model(emb_model: str) -> object:
     embeddings = HuggingFaceEmbeddings(model_name = emb_model)
     return embeddings
 
-def index_embeddings(texts: list, embeddings: object) -> object:
+def index_embeddings(texts: list, 
+                     embeddings: object,
+                     tmp_file: str) -> object:
     """ Obtain the embeddings and index it locally.
 
     Args:
         texts (list): list of extracted pages.
         embeddings (object): embedding model.
+        tmp_file (str): uploaded file name.
 
     Returns:
         object: faiss index object.
     """
     # Create a vectorstore from documents if it doesn't exist
-    if not os.path.exists(FAISS_PATH):   
+    if not os.path.exists(FAISS_PATH + tmp_file):   
         db = FAISS.from_documents(texts, embeddings)
-        db.save_local(FAISS_PATH)
-    # Load existing embedding - it is created for the first 100000 datapoints.
+        db.save_local(FAISS_PATH + tmp_file)
+    # Load existing embedding for the same file
     else:
-        db = FAISS.load_local(FAISS_PATH, embeddings)
+        db = FAISS.load_local(FAISS_PATH + tmp_file, embeddings)
     return db
 
 def get_response(db: object, query: str) -> list:
